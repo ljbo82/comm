@@ -1,0 +1,17 @@
+{
+	"terminal.integrated.profiles.windows": {
+		"Cygwin" : {
+			"path": [
+				"${env:CYGWIN_DIR}\\bin\\bash.exe",
+				"C:\\cygwin64\\bin\\bash.exe"
+			],
+			"args": ["-l"],
+			"env": {"CHERE_INVOKING": "1"}
+		},
+	},
+	"terminal.integrated.defaultProfile.windows": "Cygwin",
+	"files.associations": {
+		"*.h": "c",
+		"*.c": "c"
+	}
+}

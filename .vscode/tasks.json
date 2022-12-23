@@ -1,0 +1,23 @@
+{
+	// See https://go.microsoft.com/fwlink/?LinkId=733558
+	// for the documentation about the tasks.json format
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "build-test",
+			"detail": "Build test application",
+			"type": "shell",
+			"options": { "cwd": "test" },
+			"command": "make DEBUG=1 V=1 O=../output/vscode/test",
+			"group": "build"
+		},
+		{
+			"label": "clean",
+			"detail": "Clear source tree",
+			"type": "shell",
+			"options": { "cwd": "." },
+			"command": "make clean V=1",
+			"group": "build"
+		}
+	]
+}

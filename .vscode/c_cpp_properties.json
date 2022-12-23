@@ -1,0 +1,56 @@
+{
+	"env": {
+		"includePath": [
+			"${workspaceFolder}/src",
+			"${workspaceFolder}/include",
+			"${workspaceFolder}/test/src"
+		],
+		"defines": []
+	},
+	"configurations": [
+		{
+			"name": "Linux",
+			"includePath": [
+				"${includePath}"
+			],
+			"defines": [
+				"${defines}"
+			],
+			"compilerPath": "/usr/bin/gcc",
+			"cStandard": "gnu99",
+			"cppStandard": "gnu++11",
+			"intelliSenseMode": "linux-gcc-x64",
+			"configurationProvider": "ms-vscode.makefile-tools",
+			"compilerArgs": []
+		},
+		{
+			"name": "Windows",
+			"includePath": [
+				"${includePath}"
+			],
+			"defines": [
+				"${defines}"
+			],
+			"compilerPath": "${env:CYGWIN_DIR}\\bin\\x86_64-w64-mingw32-gcc.exe",
+			"cStandard": "gnu99",
+			"cppStandard": "gnu++11",
+			"intelliSenseMode": "windows-gcc-x64",
+			"configurationProvider": "ms-vscode.makefile-tools"
+		},
+		{
+			"name": "Windows (linux cross)",
+			"includePath": [
+				"${includePath}"
+			],
+			"defines": [
+				"${defines}"
+			],
+			"compilerPath": "/usr/bin/x86_64-w64-mingw32-gcc",
+			"cStandard": "gnu99",
+			"cppStandard": "gnu++11",
+			"intelliSenseMode": "linux-gcc-x64",
+			"configurationProvider": "ms-vscode.makefile-tools"
+		}
+	],
+	"version": 4
+}
