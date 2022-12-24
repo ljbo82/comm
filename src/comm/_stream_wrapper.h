@@ -21,21 +21,19 @@ SOFTWARE.
 */
 #pragma once
 
-#include "stream.h"
+#include <comm/stream.h>
+#include "_obj.h"
 
-typedef comm_stream_t         comm_packet_stream_t;
-typedef comm_obj_controller_t comm_packet_stream_controller_t;
+typedef struct _comm_stream_wrapper  _comm_stream_wrapper_t;
+typedef comm_obj_controller_t        _comm_stream_wrapper_controller_t;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+struct _comm_stream_wrapper {
+	comm_stream_t stream;
 
-COMM_PUBLIC comm_packet_stream_t* COMM_CALL comm_packet_stream_new(comm_stream_t* wrapped, bool blockRead, const comm_packet_stream_controller_t* controller, void* data);
+	const _comm_stream_wrapper_controller_t* controller;
+	comm_stream_t* wrapped;
+};
 
-COMM_PUBLIC bool COMM_CALL comm_packet_stream_write(comm_packet_stream_t* packetStream, const void* in, uint8_t len);
+void _comm_stream_wrapper_init(_comm_stream_wrapper_t* wrapper, comm_stream_t* wrapped, const _comm_stream_wrapper_controller_t* controller, void* data);
 
-COMM_PUBLIC uint8_t* COMM_CALL comm_packet_stream_read(comm_packet_stream_t* packetStream, uint8_t* lenOut);
-
-#ifdef __cplusplus
-} // extern "C"
-#endif
+_comm_stream_wrapper_t* _comm_stream_wrapper_new(comm_stream_t* wrapped, const _comm_stream_wrapper_controller_t* controller, void* data);

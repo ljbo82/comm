@@ -42,7 +42,11 @@ SOFTWARE.
 #include _COMM_MEM_HEADER
 
 COMM_PUBLIC void* COMM_CALL _comm_mem_alloc(size_t size) {
-	return _COMM_MEM_ALLOC_FN(size);
+	void* ptr = _COMM_MEM_ALLOC_FN(size);
+	if (!ptr)
+		errno = COMM_ERROR_NOMEM;
+
+	return ptr;
 }
 
 COMM_PUBLIC void COMM_CALL _comm_mem_free(void* ptr) {

@@ -21,21 +21,11 @@ SOFTWARE.
 */
 #pragma once
 
-#include "stream.h"
+#include <comm/obj.h>
 
-typedef comm_stream_t         comm_packet_stream_t;
-typedef comm_obj_controller_t comm_packet_stream_controller_t;
+struct _comm_obj {
+	const comm_obj_controller_t* controller;
+	void* data;
+};
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-COMM_PUBLIC comm_packet_stream_t* COMM_CALL comm_packet_stream_new(comm_stream_t* wrapped, bool blockRead, const comm_packet_stream_controller_t* controller, void* data);
-
-COMM_PUBLIC bool COMM_CALL comm_packet_stream_write(comm_packet_stream_t* packetStream, const void* in, uint8_t len);
-
-COMM_PUBLIC uint8_t* COMM_CALL comm_packet_stream_read(comm_packet_stream_t* packetStream, uint8_t* lenOut);
-
-#ifdef __cplusplus
-} // extern "C"
-#endif
+void _comm_obj_init(comm_obj_t* obj, const comm_obj_controller_t* controller, void* data);

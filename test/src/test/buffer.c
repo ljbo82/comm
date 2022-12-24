@@ -52,7 +52,7 @@ static void __test_storage_mgmt1() {
 
 	memSize = mem_size();
 
-	xBuffer = comm_buffer_new(1);
+	xBuffer = comm_buffer_new(1, NULL, NULL);
 	buffer = (_comm_buffer_t*)xBuffer;
 
 	ASSERT(!buffer->wrapped);
@@ -75,7 +75,7 @@ static void __test_storage_mgmt1() {
 	ASSERT(mem_size() == memSize);
 
 	// Buffer with no storage
-	xBuffer = comm_buffer_new(0);
+	xBuffer = comm_buffer_new(0, NULL, NULL);
 	buffer = (_comm_buffer_t*)xBuffer;
 
 	ASSERT(buffer->storage == NULL);
@@ -108,7 +108,7 @@ static void __test_storage_mgmt2() {
 
 	memSize = mem_size();
 
-	ASSERT(buffer = comm_buffer_new(0));
+	ASSERT(buffer = comm_buffer_new(0, NULL, NULL));
 
 	ASSERT(comm_buffer_set_storage(buffer, storage, sizeof(storage), true));
 	ASSERT(comm_stream_available_read(buffer) == 0);
@@ -131,7 +131,7 @@ static void __test_read_write() {
 	uint8_t readBuf[32];
 
 	uint8_t storage[15];
-	comm_buffer_t* buffer = comm_buffer_new(0);
+	comm_buffer_t* buffer = comm_buffer_new(0, NULL, NULL);
 	comm_buffer_set_storage(buffer, storage, 15, true);
 
 	ASSERT(comm_buffer_capacity(buffer) == 15);
@@ -169,6 +169,18 @@ static void __test_read_write() {
 	ASSERT(mem_size() == memSize);
 }
 
+static void __test_data() {
+	size_t memSize = mem_size();
+
+	bool data;
+	comm_buffer_t* buffer = comm_buffer_new(12, NULL, &data);
+	ASSERT(buffer);
+	ASSERT(&data == comm_obj_data(buffer));
+
+	comm_obj_del(buffer);
+	ASSERT(mem_size() == memSize);
+}
+
 void test_buffer_set_blocking(comm_buffer_t* buffer) {
 	static comm_stream_controller_t mBlockingController;
 	static bool inited = false;
@@ -193,4 +205,5 @@ void test_buffer() {
 	__test_storage_mgmt1();
 	__test_storage_mgmt2();
 	__test_read_write();
+	__test_data();
 }

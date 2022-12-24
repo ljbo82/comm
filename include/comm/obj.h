@@ -23,21 +23,10 @@ SOFTWARE.
 
 #include "defs.h"
 
-#define COMM_OBJ_DECLARE_BEGIN(type, parent) typedef struct type type##_t; \
-struct type { parent##_t parent
-
-#define COMM_OBJ_DECLARE_END() }
-
-typedef struct comm_obj comm_obj_t;
-
+typedef struct _comm_obj           comm_obj_t;
 typedef struct comm_obj_controller comm_obj_controller_t;
 
-struct comm_obj {
-	const comm_obj_controller_t* controller;
-};
-
 struct comm_obj_controller {
-	bool (COMM_CALL *on_init)(comm_obj_t* obj);
 	void (COMM_CALL *on_deinit)(comm_obj_t* obj);
 };
 
@@ -45,7 +34,9 @@ struct comm_obj_controller {
 extern "C" {
 #endif
 
-COMM_PUBLIC comm_obj_t* COMM_CALL comm_obj_new(const comm_obj_controller_t* controller, size_t szObj);
+COMM_PUBLIC comm_obj_t* COMM_CALL comm_obj_new(const comm_obj_controller_t* controller, void* data);
+
+COMM_PUBLIC void* COMM_CALL comm_obj_data(const comm_obj_t* obj);
 
 COMM_PUBLIC void COMM_CALL comm_obj_del(comm_obj_t* obj);
 

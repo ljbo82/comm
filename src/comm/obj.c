@@ -19,42 +19,29 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+#include "_obj.h"
 #include "_error.h"
 #include "_mem.h"
 
-#include <comm/obj.h>
+COMM_PUBLIC comm_obj_t* COMM_CALL comm_obj_new(const comm_obj_controller_t* controller, void* data) {
+	comm_obj_t* obj = _comm_mem_alloc(sizeof(comm_obj_t));
 
-COMM_PUBLIC comm_obj_t* COMM_CALL comm_obj_new(const comm_obj_controller_t* controller, size_t szObj) {
-	comm_obj_t* obj = NULL;
-
-	if (szObj > 0 && szObj < sizeof(comm_obj_t)) {
-		errno = COMM_ERROR_INVPARAM;
+	if (!obj)
 		goto error;
-	}
 
-	obj = _comm_mem_alloc(szObj == 0 ? sizeof(comm_obj_t) : szObj);
-	if (!obj) {
-		errno = COMM_ERROR_NOMEM;
-		goto error;
-	}
-
-	obj->controller = controller;
-
-	if (controller && controller->on_init) {
-		if (!controller->on_init(obj)) {
-			_COMM_ERROR_SET(COMM_ERROR_UNKNOWN);
-			goto error;
-		}
-	}
+	_comm_obj_init(obj, controller, data);
 
 	return obj;
 
 error:
-	if (obj) {
+	if (obj)
 		_comm_mem_free(obj);
-	}
 
 	return NULL;
+}
+
+COMM_PUBLIC void* COMM_CALL comm_obj_data(const comm_obj_t* obj) {
+	return obj->data;
 }
 
 COMM_PUBLIC void COMM_CALL comm_obj_del(comm_obj_t* obj) {

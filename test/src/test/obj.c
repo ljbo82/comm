@@ -23,62 +23,69 @@ SOFTWARE.
 #include "../mem.h"
 #include "../assert.h"
 
-COMM_OBJ_DECLARE_BEGIN(__obj, comm_obj);
-	size_t memSize;
-COMM_OBJ_DECLARE_END();
-
-static bool __inited = false;
-static bool __deinited = false;
-
-static bool COMM_CALL __on_init(comm_obj_t* xObj) {
-	__inited = true;
-	__deinited = false;
-
-	__obj_t* obj = (__obj_t*)xObj;
-	obj->memSize = mem_size();
-
-	return true;
-}
+typedef struct __obj_data __obj_data_t;
+struct __obj_data {
+	bool* deleteFlag;
+};
 
 static void COMM_CALL __on_deinit(comm_obj_t* xObj) {
-	__deinited = true;
+	__obj_data_t* data = comm_obj_data(xObj);
+	if (data && data->deleteFlag)
+		*data->deleteFlag = true;
+
+	mem_free(data);
+}
+
+static comm_obj_t* __create_test_obj(bool* deleteFlag) {
+	static comm_obj_controller_t mController = {
+		.on_deinit = __on_deinit
+	};
+
+	__obj_data_t* data;
+
+	if (deleteFlag) {
+		data = mem_alloc(sizeof(__obj_data_t));
+		ASSERT(data);
+		data->deleteFlag = deleteFlag;
+		*deleteFlag = false;
+	} else {
+		data = NULL;
+	}
+
+	comm_obj_t* obj = comm_obj_new(&mController, data);
+	ASSERT(obj);
+	ASSERT(comm_obj_data(obj) == data);
+
+	return obj;
 }
 
 static void __test_obj_new() {
 	size_t memSize = mem_size();
-	ASSERT(comm_obj_new(NULL, 1) == NULL);
-	ASSERT_ERROR(COMM_ERROR_INVPARAM);
 
-	comm_obj_t* commObj;
-	ASSERT(commObj = comm_obj_new(NULL, 0));
-	comm_obj_del(commObj);
+	comm_obj_t* obj = comm_obj_new(NULL, NULL);
+
+	ASSERT(mem_size() > memSize);
+	ASSERT(obj);
+	ASSERT(comm_obj_data(obj) == NULL);
+
+	comm_obj_del(obj);
+
 	ASSERT(mem_size() == memSize);
 }
 
 static void __test_custom_obj() {
-	comm_obj_controller_t controller = {
-		.on_init   = __on_init,
-		.on_deinit = __on_deinit
-	};
-
 	size_t memSize = mem_size();
 
-	comm_obj_t* obj;
+	bool deleted;
 
-	ASSERT(!__inited);
-	ASSERT(!__deinited);
+	comm_obj_t* obj = __create_test_obj(&deleted);
 
-	ASSERT(obj = comm_obj_new(&controller, sizeof(__obj_t)));
-	ASSERT(((__obj_t*)obj)->memSize == mem_size());
-
-	ASSERT(__inited);
-	ASSERT(!__deinited);
+	ASSERT(!deleted);
+	ASSERT(mem_size() > memSize);
 
 	comm_obj_del(obj);
 
-	ASSERT(__inited);
-	ASSERT(__deinited);
-
+	ASSERT(deleted);
 	ASSERT(mem_size() == memSize);
 }
 

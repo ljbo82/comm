@@ -19,24 +19,49 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+#include "_stream_wrapper.h"
 #include "_error.h"
-#include "_stream.h"
+#include "_mem.h"
+
 #include <comm/packet_stream.h>
 
 #define __MIN(a,b) (a) <= (b) ? (a) : (b)
 
-COMM_OBJ_DECLARE_BEGIN(__packet_stream, _comm_stream_wrapper);
+typedef struct __packet_stream __packet_stream_t;
+
+struct __packet_stream {
+	_comm_stream_wrapper_t wrapper;
+
+	const comm_packet_stream_controller_t* controller;
+
 	int16_t totalRead;
 	bool    blockRead;
 	uint8_t buffer[256];
-COMM_OBJ_DECLARE_END();
+};
 
-COMM_PUBLIC comm_packet_stream_t* COMM_CALL comm_packet_stream_new(comm_stream_t* wrapped, bool blockRead) {
-	__packet_stream_t* packetStream = (__packet_stream_t*)_comm_stream_wrap(NULL, wrapped, sizeof(__packet_stream_t));
+static void COMM_CALL __on_deinit(comm_obj_t* obj) {
+	__packet_stream_t* packetStream = (__packet_stream_t*)obj;
+
+	if (packetStream->controller && packetStream->controller->on_deinit)
+		packetStream->controller->on_deinit(obj);
+}
+
+COMM_PUBLIC comm_packet_stream_t* COMM_CALL comm_packet_stream_new(comm_stream_t* wrapped, bool blockRead, const comm_packet_stream_controller_t* controller, void* data) {
+	static _comm_stream_wrapper_controller_t mWrapperController = {
+		.on_deinit = __on_deinit
+	};
+
+	if (!wrapped) {
+		errno = COMM_ERROR_INVPARAM;
+		return NULL;
+	}
+
+	__packet_stream_t* packetStream = _comm_mem_alloc(sizeof(__packet_stream_t));
 
 	if (packetStream) {
 		packetStream->totalRead = -1;
 		packetStream->blockRead = blockRead;
+		_comm_stream_wrapper_init((_comm_stream_wrapper_t*)packetStream, wrapped, &mWrapperController, data);
 	}
 
 	return (comm_packet_stream_t*)packetStream;

@@ -24,7 +24,6 @@ SOFTWARE.
 #include <errno.h>
 
 #define COMM_ERROR_NO_ERROR  0
-#define COMM_ERROR_UNKNOWN  -1
-#define COMM_ERROR_NOMEM    -2
-#define COMM_ERROR_IO       -3
-#define COMM_ERROR_INVPARAM -4
+#define COMM_ERROR_NOMEM    -1
+#define COMM_ERROR_IO       -2
+#define COMM_ERROR_INVPARAM -3

@@ -19,15 +19,21 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+#pragma once
+
 #include <comm/buffer.h>
+#include "_stream.h"
 
 typedef struct _comm_buffer _comm_buffer_t;
 
-COMM_OBJ_DECLARE_BEGIN(_comm_buffer, comm_obj);
+struct _comm_buffer {
+	comm_stream_t stream;
+
+	const comm_buffer_controller_t* controller;
 	uint8_t* storage;
 	size_t   capacity;
 	size_t   readCursor;
 	size_t   writeCursor;
 	bool     lastRead;
 	bool     wrapped;
-COMM_OBJ_DECLARE_END();
+};

@@ -23,9 +23,12 @@ SOFTWARE.
 
 #include "obj.h"
 
-typedef comm_obj_t comm_stream_t;
+typedef comm_obj_t                    comm_stream_t;
+typedef struct comm_stream_controller comm_stream_controller_t;
 
-COMM_OBJ_DECLARE_BEGIN(comm_stream_controller, comm_obj_controller);
+struct comm_stream_controller {
+	comm_obj_controller_t objController;
+
 	uint32_t (COMM_CALL *available_read)(const comm_stream_t* stream);
 	int32_t (COMM_CALL *read)(comm_stream_t* stream, void* out, uint32_t len);
 
@@ -34,13 +37,13 @@ COMM_OBJ_DECLARE_BEGIN(comm_stream_controller, comm_obj_controller);
 	bool (COMM_CALL *flush)(comm_stream_t* stream);
 
 	bool (COMM_CALL *close)(comm_stream_t* stream);
-COMM_OBJ_DECLARE_END();
+};
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-COMM_PUBLIC comm_stream_t* COMM_CALL comm_stream_new(const comm_stream_controller_t* controller, size_t szStream);
+COMM_PUBLIC comm_stream_t* COMM_CALL comm_stream_new(const comm_stream_controller_t* controller, void* data);
 
 COMM_PUBLIC uint32_t COMM_CALL comm_stream_available_read(const comm_stream_t* stream);
 

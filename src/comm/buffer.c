@@ -28,6 +28,9 @@ SOFTWARE.
 static void COMM_CALL __on_deinit(comm_obj_t* obj) {
 	_comm_buffer_t* buffer = (_comm_buffer_t*)obj;
 
+	if (buffer->controller && buffer->controller->on_deinit)
+		buffer->controller->on_deinit(obj);
+
 	if (!buffer->wrapped && buffer->storage) {
 		_comm_mem_free(buffer->storage);
 	}
@@ -108,9 +111,9 @@ static int32_t COMM_CALL __write(comm_stream_t* stream, const void* in, uint32_t
 	return len;
 }
 
-COMM_PUBLIC comm_buffer_t* COMM_CALL comm_buffer_new(size_t capacity) {
+COMM_PUBLIC comm_buffer_t* COMM_CALL comm_buffer_new(size_t capacity, const comm_buffer_controller_t* controller, void* data) {
 	static comm_stream_controller_t mController = {
-		.comm_obj_controller.on_deinit = __on_deinit,
+		.objController.on_deinit = __on_deinit,
 
 		.available_read   = __available_read,
 		.read             = __read,
@@ -118,21 +121,24 @@ COMM_PUBLIC comm_buffer_t* COMM_CALL comm_buffer_new(size_t capacity) {
 		.write            = __write
 	};
 
-	_comm_buffer_t* buffer = (_comm_buffer_t*)comm_obj_new((const comm_obj_controller_t*)&mController, sizeof(_comm_buffer_t));
-	if (!buffer) goto error;
+	_comm_buffer_t* buffer = _comm_mem_alloc(sizeof(_comm_buffer_t));
+
+	if (!buffer)
+		goto error;
 
 	buffer->storage = capacity ? _comm_mem_alloc(capacity) : NULL;
-	if (capacity && !buffer->storage) {
-		errno = COMM_ERROR_NOMEM;
-		goto error;
-	}
 
+	if (capacity && !buffer->storage)
+		goto error;
+
+	buffer->controller = controller;
 	buffer->capacity = capacity;
 	buffer->readCursor = 0;
 	buffer->writeCursor = 0;
 	buffer->lastRead = true;
 	buffer->wrapped = false;
 
+	_comm_stream_init((comm_stream_t*)buffer, &mController, data);
 	return (comm_buffer_t*)buffer;
 
 error:

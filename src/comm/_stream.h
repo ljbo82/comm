@@ -21,11 +21,7 @@ SOFTWARE.
 */
 #pragma once
 
+#include "_obj.h"
 #include <comm/stream.h>
 
-COMM_OBJ_DECLARE_BEGIN(_comm_stream_wrapper, comm_stream);
-	const comm_obj_controller_t* wrapperController;
-	comm_stream_t* wrappedStream;
-COMM_OBJ_DECLARE_END();
-
-_comm_stream_wrapper_t* _comm_stream_wrap(const comm_obj_controller_t* wrapperController, comm_stream_t* wrappedStream, size_t szWrapper);
+void _comm_stream_init(comm_stream_t* stream, const comm_stream_controller_t* controller, void* data);

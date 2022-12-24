@@ -26,17 +26,17 @@ SOFTWARE.
 #include <string.h>
 
 static void __wrapping_test() {
-	ASSERT(!comm_line_stream_new(NULL, 1023, false));
+	ASSERT(!comm_line_stream_new(NULL, 1023, false, NULL, NULL));
 	ASSERT_ERROR(COMM_ERROR_INVPARAM);
 }
 
 static void __blocking_buffer_read_test() {
 	size_t memSize = mem_size();
 
-	comm_buffer_t* buffer = comm_buffer_new(1024);
+	comm_buffer_t* buffer = comm_buffer_new(1024, NULL, NULL);
 	test_buffer_set_blocking(buffer);
 
-	comm_line_stream_t* lineStream = comm_line_stream_new(buffer, 1023, true);
+	comm_line_stream_t* lineStream = comm_line_stream_new(buffer, 1023, true, NULL, NULL);
 	ASSERT(lineStream);
 
 	ASSERT(!comm_line_stream_read(lineStream));
@@ -68,10 +68,10 @@ static void __blocking_buffer_read_test() {
 static void __non_blocking_buffer_read_test() {
 	size_t memSize = mem_size();
 
-	comm_buffer_t* buffer = comm_buffer_new(1024);
+	comm_buffer_t* buffer = comm_buffer_new(1024, NULL, NULL);
 	test_buffer_set_blocking(buffer);
 
-	comm_line_stream_t* lineStream = comm_line_stream_new(buffer, 1023, false);
+	comm_line_stream_t* lineStream = comm_line_stream_new(buffer, 1023, false, NULL, NULL);
 	ASSERT(lineStream);
 
 	ASSERT(!comm_line_stream_read(lineStream));
@@ -120,11 +120,11 @@ static void __write_test() {
 
 	uint8_t storage[16];
 
-	comm_buffer_t* buffer = comm_buffer_new(0);
+	comm_buffer_t* buffer = comm_buffer_new(0, NULL, NULL);
 	ASSERT(buffer);
 	comm_buffer_set_storage(buffer, storage, sizeof(storage), true);
 
-	comm_line_stream_t* lineStream = comm_line_stream_new(buffer, 1023, false);
+	comm_line_stream_t* lineStream = comm_line_stream_new(buffer, 1023, false, NULL, NULL);
 	ASSERT(lineStream);
 
 	memset(storage, 0, sizeof(storage));
@@ -172,9 +172,28 @@ static void __write_test() {
 	ASSERT(mem_size() == memSize);
 }
 
+static void __test_data() {
+	size_t memSize = mem_size();
+
+	bool data;
+
+	comm_stream_t* stream = comm_stream_new(NULL, NULL);
+	ASSERT(stream);
+
+	comm_line_stream_t* lineStream = comm_line_stream_new(stream, 12, false, NULL, &data);
+	ASSERT(lineStream);
+	ASSERT(&data == comm_obj_data(lineStream));
+
+	comm_obj_del(lineStream);
+	comm_obj_del(stream);
+
+	ASSERT(mem_size() == memSize);
+}
+
 void test_line_stream() {
 	__wrapping_test();
 	__blocking_buffer_read_test();
 	__non_blocking_buffer_read_test();
 	__write_test();
+	__test_data();
 }

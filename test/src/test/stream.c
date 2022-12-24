@@ -25,7 +25,21 @@ SOFTWARE.
 
 #include <inttypes.h>
 
-void test_stream() {
+static void __test_data() {
+	size_t memSize = mem_size();
+
+	bool data;
+
+	comm_stream_t* stream = comm_stream_new(NULL, &data);
+	ASSERT(stream);
+	ASSERT(&data == comm_obj_data(stream));
+
+	comm_obj_del(stream);
+
+	ASSERT(mem_size() == memSize);
+}
+
+static void __test_void_stream() {
 	size_t memSize = mem_size();
 	comm_stream_t* stream = comm_stream_new(NULL, 0);
 	ASSERT (stream);
@@ -42,4 +56,9 @@ void test_stream() {
 	comm_obj_del(stream);
 
 	ASSERT(mem_size() == memSize);
+}
+
+void test_stream() {
+	__test_void_stream();
+	__test_data();
 }

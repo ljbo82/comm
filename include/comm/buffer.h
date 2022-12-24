@@ -23,13 +23,14 @@ SOFTWARE.
 
 #include "stream.h"
 
-typedef comm_stream_t comm_buffer_t;
+typedef comm_stream_t         comm_buffer_t;
+typedef comm_obj_controller_t comm_buffer_controller_t;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-COMM_PUBLIC comm_buffer_t* COMM_CALL comm_buffer_new(size_t capacity);
+COMM_PUBLIC comm_buffer_t* COMM_CALL comm_buffer_new(size_t capacity, const comm_buffer_controller_t* controller, void* data);
 
 COMM_PUBLIC bool COMM_CALL comm_buffer_set_storage(comm_buffer_t* buffer, uint8_t* storage, size_t capacity, bool empty);
 

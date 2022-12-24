@@ -23,13 +23,14 @@ SOFTWARE.
 
 #include "stream.h"
 
-typedef comm_stream_t comm_line_stream_t;
+typedef comm_stream_t         comm_line_stream_t;
+typedef comm_obj_controller_t comm_line_stream_controller_t;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-COMM_PUBLIC comm_line_stream_t* COMM_CALL comm_line_stream_new(comm_stream_t* wrapped, size_t lineMaxLen, bool blockRead);
+COMM_PUBLIC comm_line_stream_t* COMM_CALL comm_line_stream_new(comm_stream_t* wrapped, size_t lineMaxLen, bool blockRead, const comm_line_stream_controller_t* controller, void* data);
 
 COMM_PUBLIC bool COMM_CALL comm_line_stream_write(comm_line_stream_t* lineStream, const char* msg);
 

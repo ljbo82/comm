@@ -19,8 +19,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+#include "_stream_wrapper.h"
 #include "_error.h"
-#include "_stream.h"
 #include "_mem.h"
 
 #include <comm/line_stream.h>
@@ -28,36 +28,51 @@ SOFTWARE.
 #define __LINE_LIMIT     (UINT16_MAX - 1)
 #define __LINE_DELIMITER '\n'
 
-COMM_OBJ_DECLARE_BEGIN(__line_stream, _comm_stream_wrapper);
+typedef struct __line_stream __line_stream_t;
+struct __line_stream {
+	_comm_stream_wrapper_t wrapper;
+
+	const comm_line_stream_controller_t* controller;
 	uint16_t totalRead;
 	bool     blockRead;
 	size_t   lineMaxLen;
 	uint8_t* buffer;
-COMM_OBJ_DECLARE_END();
+};
 
 static void COMM_CALL __on_deinit(comm_obj_t* obj) {
 	__line_stream_t* lineStream = (__line_stream_t*)obj;
+
+	if (lineStream->controller && lineStream->controller->on_deinit)
+		lineStream->controller->on_deinit(obj);
+
 	_comm_mem_free(lineStream->buffer);
 }
 
-COMM_PUBLIC comm_line_stream_t* COMM_CALL comm_line_stream_new(comm_stream_t* wrapped, size_t lineMaxLen, bool blockRead) {
-	static comm_obj_controller_t mWrapperController = {
+COMM_PUBLIC comm_line_stream_t* COMM_CALL comm_line_stream_new(comm_stream_t* wrapped, size_t lineMaxLen, bool blockRead, const comm_line_stream_controller_t* controller, void* data) {
+	static _comm_stream_wrapper_controller_t mWrapperController = {
 		.on_deinit = __on_deinit
 	};
 
-	if (lineMaxLen > __LINE_LIMIT || lineMaxLen == 0) {
+	if (!wrapped || lineMaxLen > __LINE_LIMIT || lineMaxLen == 0) {
 		errno = COMM_ERROR_INVPARAM;
 		return NULL;
 	}
 
-	__line_stream_t* lineStream = (__line_stream_t*)_comm_stream_wrap(&mWrapperController, wrapped, sizeof(__line_stream_t));
+	__line_stream_t* lineStream = _comm_mem_alloc(sizeof(__line_stream_t));
 
-	if (!lineStream) goto error;
+	if (!lineStream)
+		goto error;
 
+	lineStream->controller = controller;
 	lineStream->totalRead = 0;
 	lineStream->blockRead = blockRead;
 	lineStream->lineMaxLen = lineMaxLen;
 	lineStream->buffer = _comm_mem_alloc(lineMaxLen + 1);
+
+	if (!lineStream->buffer)
+		goto error;
+
+	_comm_stream_wrapper_init((_comm_stream_wrapper_t*)lineStream, wrapped, &mWrapperController, data);
 
 	return (comm_line_stream_t*)lineStream;
 error:
