@@ -96,7 +96,7 @@ COMM_PUBLIC bool COMM_CALL comm_line_stream_write(comm_line_stream_t* xLineStrea
 		} while (written == 0);
 	}
 
-	return true;
+	return comm_stream_flush(xLineStream);
 
 error:
 	return false;

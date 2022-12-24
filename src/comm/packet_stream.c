@@ -71,9 +71,7 @@ COMM_PUBLIC bool COMM_CALL comm_packet_stream_write(comm_packet_stream_t* packet
 		} while (len > 0);
 	}
 
-	// Packet fully written
-
-	return true;
+	return comm_stream_flush(packetStream);
 
 error:
 	_COMM_ERROR_SET(COMM_ERROR_IO);
