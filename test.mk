@@ -18,6 +18,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+CPP_PROJECT_BUILDER ?= make
+
 O ?= output/test
 
 PROJ_NAME := comm-test
@@ -29,4 +31,4 @@ SRC_DIRS += test
 run: all
 	@$(O_DIST_DIR)/bin/comm-test0
 
-include make/builder.mk
+include $(CPP_PROJECT_BUILDER)/builder.mk

@@ -18,7 +18,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-include make/git.mk
+CPP_PROJECT_BUILDER ?= make
+include $(CPP_PROJECT_BUILDER)/git.mk
 
 PROJ_NAME := comm
 PROJ_TYPE := lib
@@ -30,4 +31,4 @@ CFLAGS += -std=gnu99
 test:
 	$(MAKE) -f test.mk run
 
-include make/builder.mk
+include $(CPP_PROJECT_BUILDER)/builder.mk
