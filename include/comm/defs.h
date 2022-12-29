@@ -28,37 +28,23 @@ SOFTWARE.
 #include <stdbool.h>
 
 #if defined _WIN32 || defined __CYGWIN__
-	#if defined(COMM_BUILD_DLL) && defined(COMM_STATIC_LIB)
-		#error COMM_BUILD_DLL and COMM_STATIC_LIB are both defined
-	#endif
-
-	#ifdef COMM_BUILD_DLL
+	#if defined(COMM_BUILD_SHARED_LIB)
 		/** @internal */
 		#define COMM_PUBLIC __declspec(dllexport)
 	#else
-		#ifndef COMM_STATIC_LIB
-			/** @internal */
-			#define COMM_PUBLIC __declspec(dllimport)
-		#else
-			/** @internal */
-			#define COMM_PUBLIC
-		#endif
+		/** @internal */
+		#define COMM_PUBLIC
 	#endif
 
 	/** @internal */
 	#define COMM_CALL __cdecl
 #else
-	#ifdef COMM_STATIC_LIB
+	#if defined(COMM_BUILD_SHARED_LIB) && __GNUC__ >= 4
+		/** @internal */
+		#define COMM_PUBLIC __attribute__ ((visibility ("default")))
+	#else
 		/** @internal */
 		#define COMM_PUBLIC
-	#else
-		#if __GNUC__ >= 4
-			/** @internal */
-			#define COMM_PUBLIC __attribute__ ((visibility ("default")))
-		#else
-			/** @internal */
-			#define COMM_PUBLIC
-		#endif
 	#endif
 
 	/** @internal */

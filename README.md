@@ -12,4 +12,4 @@ This project is distributed under MIT License. Please see the [LICENSE](LICENSE)
 
 ## Contact
 
-For general information visit the main project site at https://github.com/ljbo82/comm.
+For general information visit the main project site at https://github.com/ljbo82/libcomm.

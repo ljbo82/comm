@@ -29,6 +29,7 @@ SOFTWARE.
 #define __LINE_DELIMITER '\n'
 
 typedef struct __line_stream __line_stream_t;
+
 struct __line_stream {
 	_comm_stream_wrapper_t wrapper;
 
@@ -103,8 +104,8 @@ COMM_PUBLIC bool COMM_CALL comm_line_stream_write(comm_line_stream_t* xLineStrea
 		}
 	}
 
-	uint8_t newLine = __LINE_DELIMITER;
 	if (!endsWithNewLine) {
+		uint8_t newLine = __LINE_DELIMITER;
 		do {
 			written = comm_stream_write(xLineStream, &newLine, 1);
 			if (written < 0) goto error;

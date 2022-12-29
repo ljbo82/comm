@@ -21,12 +21,12 @@ SOFTWARE.
 */
 #include "mem.h"
 #include "assert.h"
-#include "test/mem.h"
-#include "test/obj.h"
-#include "test/stream.h"
-#include "test/buffer.h"
-#include "test/line_stream.h"
-#include "test/packet_stream.h"
+#include "tests/mem.h"
+#include "tests/obj.h"
+#include "tests/stream.h"
+#include "tests/buffer.h"
+#include "tests/line_stream.h"
+#include "tests/packet_stream.h"
 
 #include <comm.h>
 

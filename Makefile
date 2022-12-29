@@ -28,6 +28,6 @@ CFLAGS += -std=gnu99
 
 .PHONY: test
 test:
-	$(MAKE) -C test O=../output/test run
+	$(MAKE) -f test.mk run
 
 include make/builder.mk

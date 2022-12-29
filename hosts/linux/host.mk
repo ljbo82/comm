@@ -18,10 +18,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+# NOTE: Test application use library sources
 ifeq ($(PROJ_TYPE),lib)
-    ifeq ($(LIB_TYPE),static)
-        CFLAGS += -DCOMM_STATIC_LIB
-    endif
+   CFLAGS += -fvisibility=hidden
+   ifeq ($(LIB_TYPE),shared)
+       CFLAGS += -DCOMM_SHARED_LIB
+   endif
 endif
-
-CFLAGS += -fvisibility=hidden

@@ -3,7 +3,7 @@
 		"includePath": [
 			"${workspaceFolder}/src",
 			"${workspaceFolder}/include",
-			"${workspaceFolder}/test/src"
+			"${workspaceFolder}/test"
 		],
 		"defines": []
 	},

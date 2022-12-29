@@ -55,7 +55,7 @@ static bool COMM_CALL __close(comm_stream_t* stream) {
 	return comm_stream_flush(((_comm_stream_wrapper_t*)stream)->wrapped);
 }
 
-static comm_stream_controller_t __streamController = {
+static const comm_stream_controller_t __streamController = {
 	.objController.on_deinit = __on_deinit,
 
 	.available_read  = __available_read,

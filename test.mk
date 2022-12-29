@@ -18,17 +18,15 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+O ?= output/test
+
 PROJ_NAME := comm-test
 PROJ_TYPE := app
 
-SRC_DIRS     += ../src
-INCLUDE_DIRS += ../include
-HOSTS_DIRS   += ../hosts
-CFLAGS       += -DCOMM_STATIC_LIB
+SRC_DIRS += test
 
 .PHONY: run
 run: all
 	@$(O_DIST_DIR)/bin/comm-test0
 
-
-include ../make/builder.mk
+include make/builder.mk
