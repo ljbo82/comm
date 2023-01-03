@@ -118,7 +118,7 @@ error:
 	return false;
 }
 
-COMM_PUBLIC const char* COMM_CALL comm_line_stream_read(comm_line_stream_t* xLineStream) {
+COMM_PUBLIC char* COMM_CALL comm_line_stream_read(comm_line_stream_t* xLineStream) {
 	__line_stream_t* lineStream = (__line_stream_t*)xLineStream;
 
 	int32_t read;
@@ -136,7 +136,7 @@ COMM_PUBLIC const char* COMM_CALL comm_line_stream_read(comm_line_stream_t* xLin
 
 			if (*out == __LINE_DELIMITER) {
 				*out = '\0';
-				return (const char*)lineStream->buffer;
+				return (char*)lineStream->buffer;
 			} else {
 				lineStream->totalRead++;
 				if (lineStream->totalRead <= lineStream->lineMaxLen) {
@@ -157,7 +157,7 @@ COMM_PUBLIC const char* COMM_CALL comm_line_stream_read(comm_line_stream_t* xLin
 			if (*out == __LINE_DELIMITER) {
 				*out = '\0';
 				lineStream->totalRead = 0;
-				return (const char*)lineStream->buffer;
+				return (char*)lineStream->buffer;
 			}
 
 			lineStream->totalRead++;

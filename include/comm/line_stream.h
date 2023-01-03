@@ -34,7 +34,7 @@ COMM_PUBLIC comm_line_stream_t* COMM_CALL comm_line_stream_new(comm_stream_t* wr
 
 COMM_PUBLIC bool COMM_CALL comm_line_stream_write(comm_line_stream_t* lineStream, const char* msg);
 
-COMM_PUBLIC const char* COMM_CALL comm_line_stream_read(comm_line_stream_t* lineStream);
+COMM_PUBLIC char* COMM_CALL comm_line_stream_read(comm_line_stream_t* lineStream);
 
 #ifdef __cplusplus
 } // extern "C"
