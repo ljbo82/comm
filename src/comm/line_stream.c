@@ -26,7 +26,7 @@ SOFTWARE.
 #include <comm/line_stream.h>
 
 #define __LINE_LIMIT     (UINT16_MAX - 1)
-#define __LINE_DELIMITER '\n'
+#define __LINE_DELIMITER '\r'
 
 typedef struct __line_stream __line_stream_t;
 
