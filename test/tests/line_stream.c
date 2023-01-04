@@ -42,7 +42,7 @@ static void __blocking_buffer_read_test() {
 	ASSERT(!comm_line_stream_read(lineStream));
 	ASSERT_ERROR(TEST_BUFFER_TIMEOUT_ERROR);
 
-	const char* lines = "line1\nline2\n";
+	const char* lines = "line1\rline2\r";
 	comm_stream_write(buffer, lines, strlen(lines));
 	const char* line = comm_line_stream_read(lineStream);
 	ASSERT(line);
@@ -87,7 +87,7 @@ static void __non_blocking_buffer_read_test() {
 	ASSERT(!line);
 	ASSERT(errno == 0);
 
-	lines = "e1\nLI";
+	lines = "e1\rLI";
 	comm_stream_write(buffer, lines, strlen(lines));
 
 	line = comm_line_stream_read(lineStream);
@@ -98,7 +98,7 @@ static void __non_blocking_buffer_read_test() {
 	ASSERT(!line);
 	ASSERT(errno == 0);
 
-	lines = "NE2\n";
+	lines = "NE2\r";
 	comm_stream_write(buffer, lines, strlen(lines));
 
 	line = comm_line_stream_read(lineStream);
@@ -129,42 +129,42 @@ static void __write_test() {
 
 	memset(storage, 0, sizeof(storage));
 	comm_line_stream_write(lineStream, NULL);
-	ASSERT(memcmp(storage, "\n", 1) == 0);
+	ASSERT(memcmp(storage, "\r", 1) == 0);
 	comm_buffer_clear(buffer);
 
 	memset(storage, 0, sizeof(storage));
 	comm_line_stream_write(lineStream, "LINE");
-	ASSERT(memcmp(storage, "LINE\n", 5) == 0);
+	ASSERT(memcmp(storage, "LINE\r", 5) == 0);
 	comm_buffer_clear(buffer);
 
 	memset(storage, 0, sizeof(storage));
-	comm_line_stream_write(lineStream, "LINE\n");
-	ASSERT(memcmp(storage, "LINE\n", 5) == 0);
+	comm_line_stream_write(lineStream, "LINE\r");
+	ASSERT(memcmp(storage, "LINE\r", 5) == 0);
 	comm_buffer_clear(buffer);
 
 	memset(storage, 0, sizeof(storage));
-	comm_line_stream_write(lineStream, "LINE1\nline2");
-	ASSERT(memcmp(storage, "LINE1\nline2\n", 12) == 0);
+	comm_line_stream_write(lineStream, "LINE1\rline2");
+	ASSERT(memcmp(storage, "LINE1\rline2\r", 12) == 0);
 	comm_buffer_clear(buffer);
 
 	memset(storage, 0, sizeof(storage));
-	comm_line_stream_write(lineStream, "LINE1\nline2\n");
-	ASSERT(memcmp(storage, "LINE1\nline2\n", 12) == 0);
+	comm_line_stream_write(lineStream, "LINE1\rline2\r");
+	ASSERT(memcmp(storage, "LINE1\rline2\r", 12) == 0);
 	comm_buffer_clear(buffer);
 
 	memset(storage, 0, sizeof(storage));
 	comm_line_stream_write(lineStream, "");
-	ASSERT(memcmp(storage, "\n", 1) == 0);
+	ASSERT(memcmp(storage, "\r", 1) == 0);
 	comm_buffer_clear(buffer);
 
 	memset(storage, 0, sizeof(storage));
-	comm_line_stream_write(lineStream, "\n");
-	ASSERT(memcmp(storage, "\n", 1) == 0);
+	comm_line_stream_write(lineStream, "\r");
+	ASSERT(memcmp(storage, "\r", 1) == 0);
 	comm_buffer_clear(buffer);
 
 	memset(storage, 0, sizeof(storage));
-	comm_line_stream_write(lineStream, "\n\n");
-	ASSERT(memcmp(storage, "\n\n", 2) == 0);
+	comm_line_stream_write(lineStream, "\r\r");
+	ASSERT(memcmp(storage, "\r\r", 2) == 0);
 	comm_buffer_clear(buffer);
 
 	comm_obj_del(buffer);
