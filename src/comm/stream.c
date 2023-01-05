@@ -75,11 +75,11 @@ COMM_PUBLIC int32_t COMM_CALL comm_stream_write(comm_stream_t* stream, const voi
 	const comm_stream_controller_t* controller = (const comm_stream_controller_t*)stream->controller;
 
 	if (controller && controller->write) {
-		int32_t read = controller->write(stream, in, len);
-		if (read < 0) {
+		int32_t written = controller->write(stream, in, len);
+		if (written < 0) {
 			_COMM_ERROR_SET(COMM_ERROR_IO);
 		}
-		return read;
+		return written;
 	}
 
 	return 0;
