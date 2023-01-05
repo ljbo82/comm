@@ -75,8 +75,19 @@ static void __blocking_buffer_read_test() {
 	// Zero size packet
 	len = 123;
 	__create_test_packet(buffer, 0);
+	ASSERT(comm_stream_available_read(buffer) == 1);
 	ASSERT(comm_packet_stream_read(packetStream, &len));
+	ASSERT(comm_stream_available_read(buffer) == 0);
 	ASSERT(len == 0);
+
+	// Packet with size 1
+	len = 123;
+	uint8_t b = 1;
+	ASSERT(comm_packet_stream_write(packetStream, &b, 1));
+	ASSERT(comm_stream_available_read(buffer) == 2);
+	ASSERT(comm_packet_stream_read(packetStream, &len));
+	ASSERT(comm_stream_available_read(buffer) == 0);
+	ASSERT(len == 1);
 
 	// Packet with size 10
 	__create_test_packet(buffer, 10);
